@@ -171,26 +171,6 @@ class App(customtkinter.CTk):
                                                       command=save_app_conf)
             save_app_button.grid(row=1, column=1, sticky="nsew", padx=10, pady=10)
 
-        def manual_command():
-            '''When you press this button will pop-up a dialog with the given manual'''
-            # welcome frame and window
-            manual_window = customtkinter.CTkToplevel()
-            manual_window.geometry(f"800x400")
-            manual_window.title("MANUAL")
-            manual_window.columnconfigure(0, weight=1)
-            manual_window.rowconfigure(0, weight=1)
-
-            manual_frame = customtkinter.CTkFrame(master=manual_window, fg_color="transparent")
-            manual_frame.grid(padx=30, pady=30, sticky="nsew")
-            manual_frame.place(relx=0.5, rely=0.5, anchor="center")
-            manual_frame.columnconfigure(0, weight=1)
-            manual_frame.rowconfigure(0, weight=1)
-
-            manual_label = customtkinter.CTkTextbox(master=manual_frame, wrap="word", width=750, height=350)
-            manual_label.grid(row=0, column=0, sticky="nsew")
-            manual_label.insert("end", "anche un testo preso da json o config")
-            manual_label.configure(state="disabled")
-
         def speed_test_button():
             '''Run a speedtest powered by Ookla in the nearest and better server'''
             speed_test_window = customtkinter.CTkToplevel()
@@ -316,12 +296,12 @@ class App(customtkinter.CTk):
             welcome_label = customtkinter.CTkTextbox(master=frame_welcome, width=350, height=70, wrap="word")
             welcome_label.grid(row=1, sticky="w", pady=15)
             welcome_label.insert("end",
-                                 "Benvenuto, questo è NetGun, il programma perfetto per esperti e non, in ambito di ethical hacking. Buon hack a tutti!")
+                                 "Benvenuto, questo è NetGun, il coltellino svizzero dei Penetration Tester, quì potrai trovare una suite di utilities da utilizzare durante il BlackBox Testing di Infrastrutture di rete.")
             welcome_label.configure(state="disabled")
 
             # button to open the manuale in a toplevel window
             manual_button = customtkinter.CTkButton(master=frame_welcome, text="Manual", image=self.document_logo,
-                                                    compound="right", command=manual_command,
+                                                    compound="right", command=lambda: web.open("https://github.com/MyCr4ck/NetGun_Classe03/blob/main/Documentation/MANUALE%20D_USO.pdf", new=2),
                                                     font=customtkinter.CTkFont(size=18))
             manual_button.grid(row=2, sticky="nsew", pady=15)
 
@@ -765,54 +745,82 @@ class App(customtkinter.CTk):
                         raise Exception("Nessun servizio selezionato!!")
 
                     service_focus = App.context.scan_result.result["ports"][name_focus]['service']
-                    print("QUa va giusto")
-                   #if service_focus not in App.context.misconfiguration:
+                    # if service_focus not in App.context.misconfiguration:
                     #    raise Exception("Misconfiguration data not available for service: " + service_focus)
 
-                    print("QUa va giusto 2.0")
-                    #name_focus = "Names focus" #scan_tree.item(item_focus, "text")
-                    #service_focus = "Service focus name" #App.context.scan_result.result[name]['service']
+                    # name_focus = "Names focus" #scan_tree.item(item_focus, "text")
+                    # service_focus = "Service focus name" #App.context.scan_result.result[name]['service']
 
                     # data
                     path = "../persistence/storage/misconfiguration.xml"
                     service_misconf = App.context.misconfiguration
-                    misconf = service_misconf.misconfigurations_dict[service_focus][0]
-                    print("QUa va giusto 3.0")
-                    misconf_tool_installation = misconf.tool_installation
-                    misconf_test_type = misconf.testType
-                    misconf_description = misconf.description
-                    misconf_command = misconf.command
+                    misconf = service_misconf.misconfigurations_dict[service_focus]
 
                     # create a top level window
                     top_misconf = customtkinter.CTkToplevel()
-                    top_misconf.geometry(f"700x600")
+                    top_misconf.geometry(f"750x700")
                     top_misconf.title("Misconfiguration")
 
-                    misconf_frame = customtkinter.CTkFrame(top_misconf, fg_color="transparent")
+                    misconf_frame = customtkinter.CTkScrollableFrame(top_misconf, fg_color="transparent", width=700, height=650)
                     misconf_frame.grid(sticky="nsew")
                     misconf_frame.place(relx=0.5, rely=0.5, anchor="c")
 
                     service_label = customtkinter.CTkLabel(misconf_frame, text=service_focus,
-                                                       font=customtkinter.CTkFont(size=35, weight="bold"))
-                    service_label.grid(row=0,sticky="new", pady=10, padx=30)
+                                                           font=customtkinter.CTkFont(size=35, weight="bold"))
+                    service_label.grid(row=0, sticky="new", pady=10, padx=30)
 
-                    tool_install = customtkinter.CTkTextbox(master=misconf_frame, wrap="word", height=80, font=main_font)
-                    tool_install.grid(row=2, column=0, sticky="nsew", pady=10)
-                    tool_install.insert("end", misconf_tool_installation)
-                    tool_install.configure(state="disabled")
+                    # carlo sei bello come gravino
+                    f = 1
+                    for i in misconf:
+                        misconf_tool_installation = i.tool_installation
+                        misconf_test_type = i.testType
+                        misconf_description = i.description
+                        misconf_command = i.command
 
-                    test_type = customtkinter.CTkLabel(misconf_frame, text=misconf_test_type, font=main_font)
-                    test_type.grid(row=1, column=0, sticky="nsew", pady=10)
+                        test_type = customtkinter.CTkLabel(misconf_frame, text=misconf_test_type,
+                                                           font=customtkinter.CTkFont(size=18, weight="bold"),
+                                                           fg_color="#008bd3", text_color="white",
+                                                           corner_radius=5)
+                        test_type.grid(row=f, column=0, sticky="nsew", pady=10)
+                        f += 1
+                        description_label = customtkinter.CTkTextbox(misconf_frame, wrap="word", font=main_font)
+                        description_label.grid(row=f, column=0, sticky="nsew", pady=10)
+                        new_miscon = "Description:\n" + misconf_description
+                        description_label.insert("end", new_miscon)
+                        description_label.configure(state="disabled", fg_color="transparent")
 
-                    description_label = customtkinter.CTkTextbox(misconf_frame, wrap="word", font=main_font)
-                    description_label.grid(row=3, column=0, sticky="nsew", pady=10)
-                    description_label.insert("end", misconf_description)
-                    description_label.configure(state="disabled", fg_color="transparent")
 
-                    command_textbox = customtkinter.CTkTextbox(master=misconf_frame, wrap="word", height=80, font=main_font)
-                    command_textbox.grid(row=4, column=0, sticky="nsew", pady=10)
-                    command_textbox.insert("end", misconf_command)
-                    command_textbox.configure(state="disabled")
+                        f += 1
+                        tool_install = customtkinter.CTkTextbox(master=misconf_frame, wrap="word", height=80, width=650,
+                                                                font=main_font)
+                        tool_install.grid(row=f, column=0, sticky="nsew", pady=10)
+                        tool_install.insert("end", misconf_tool_installation)
+                        tool_install.configure(state="disabled")
+
+                        f += 1
+
+                        command_tool = customtkinter.CTkButton(master=misconf_frame, text="Install",width=main_width, height=main_height,
+                                                                 image=self.shortcut_icon,
+                                                                 compound="right", command=i.install_tool,
+                                                                 font=main_font)
+                        command_tool.grid(row=f, column=0, sticky="se", pady=10)
+
+                        f += 1
+
+                        command_textbox = customtkinter.CTkTextbox(master=misconf_frame, wrap="word", height=80,width=650,
+                                                                   font=main_font)
+                        command_textbox.grid(row=f, column=0, sticky="nsew", pady=10)
+                        command_textbox.insert("end", misconf_command)
+                        command_textbox.configure(state="disabled")
+
+                        f += 1
+
+                        command_esegui = customtkinter.CTkButton(master=misconf_frame, text="RUN", image=self.shortcut_icon,
+                                                  compound="right", command=i.test_misconfiguration,width=main_width, height=main_height,
+                                                  font=main_font)
+                        command_esegui.grid(row=f, column=0, sticky="se", pady=10)
+
+                        f += 1
                 except Exception as e:
                     error_popup(e)
 
@@ -958,6 +966,7 @@ if __name__ == "__main__":
     global mon_height
     mon_width = first_monitor.width
     mon_height = first_monitor.height
+
 
     app = App()
     app.mainloop()
