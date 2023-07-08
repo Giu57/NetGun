@@ -23,9 +23,9 @@
 </div>
 
 ### Contributors
-- [Carlo   Colizzi    0512112599](https://github.com/MyCr4ck)
-- [Giulio  Incoronato 0512111363](https://github.com/ShackWove)
-- [Antonio Mazzarella 0512112830](https://github.com/InfiniteSephiroth)
+- [Carlo   Colizzi](https://github.com/MyCr4ck)
+- [Giulio  Incoronato](https://github.com/ShackWove)
+- [Antonio Mazzarella](https://github.com/InfiniteSephiroth)
 
 ## Introduzione
 NetGun è un Vulnerability Scanner scritto in Python. Permette di scannerizzare infrastrutture di Rete, enumerare i servizi in esecuzione su queste, scovare CVE e Misconfigurations.
